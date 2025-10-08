@@ -63,6 +63,7 @@ const getBooksById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     try {
         const id = req.params.bookId;
         const singleBook = yield book_model_1.default.findById(id);
+        // console.log(singleBook);
         res.send({
             success: true,
             message: "Book retrieved successfully",
@@ -81,6 +82,7 @@ const updateBook = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const id = req.params.bookId;
         const updatedData = req.body;
+        // console.log(updatedData);
         const data = yield book_model_1.default.findByIdAndUpdate(id, updatedData, {
             new: true,
             runValidators: true,

@@ -141,7 +141,7 @@ const SingleBooks = () => {
                       <Button
                         variant="outline"
                         onClick={handleDelete}
-                        className="w-full border-red-500 text-red-600 hover:bg-red-50"
+                        className="w-full border-red-500 text-red-600 hover:bg-red-50 mt-2.5"
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
                         Delete Book

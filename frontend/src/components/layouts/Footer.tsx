@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Mail, Phone, MapPin, BookOpen } from 'lucide-react';
 
 const Footer = () => {
@@ -30,7 +30,6 @@ const Footer = () => {
                 <a
                   href="/"
                   className="text-gray-600 hover:text-gray-900 text-sm sm:text-base transition-colors inline-block hover:translate-x-1 transform duration-200"
-                  style={{ hover: { color: '#00b9be' } }}
                 >
                   📚 All Books
                 </a>

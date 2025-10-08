@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Menu, X, BookOpen } from 'lucide-react';
 import { Link, NavLink } from 'react-router';
 
