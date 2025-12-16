@@ -17,13 +17,34 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useForm, type FieldValues, type SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useCreateBookMutation } from "@/redux/api/baseApi";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
+
+// Zod validation schema
+const bookSchema = z.object({
+  title: z.string().min(1, "Title is required").max(200, "Title is too long"),
+  author: z.string().min(1, "Author is required").max(100, "Author name is too long"),
+  genre: z.enum(["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"], {
+    required_error: "Please select a genre",
+  }),
+  isbn: z.string().min(10, "ISBN must be at least 10 characters").max(13, "ISBN must not exceed 13 characters"),
+  copies: z.number().min(1, "At least 1 copy is required").int("Copies must be a whole number"),
+  description: z.string().min(10, "Description must be at least 10 characters").max(1000, "Description is too long"),
+  available: z.boolean(),
+});
+
+type BookFormValues = z.infer<typeof bookSchema>;
 
 export function CreateBook() {
   const [createBook, { isLoading }] = useCreateBookMutation();
-  const form = useForm({
+  const navigate = useNavigate();
+  
+  const form = useForm<BookFormValues>({
+    resolver: zodResolver(bookSchema),
     defaultValues: {
       title: "",
       author: "",
@@ -35,13 +56,9 @@ export function CreateBook() {
     },
   });
 
-  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+  const onSubmit = async (data: BookFormValues) => {
     try {
-      const bookData = {
-        ...data,
-        copies: Number(data.copies),
-      };
-      const res = await createBook(bookData).unwrap();
+      const res = await createBook(data).unwrap();
       console.log("Book created successfully:", res);
       toast.success("Book Added successfully!", {
         duration: 2000,
@@ -52,8 +69,14 @@ export function CreateBook() {
         },
       });
       form.reset();
+      // Redirect to /books after successful submission
+      navigate("/books");
     } catch (error) {
       console.error("Error creating book:", error);
+      toast.error("Failed to create book. Please try again.", {
+        duration: 2000,
+        position: "top-right",
+      });
     }
   };
 
@@ -86,7 +109,6 @@ export function CreateBook() {
                         <Input
                           placeholder="Enter book title"
                           {...field}
-                          value={field.value || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -104,7 +126,6 @@ export function CreateBook() {
                         <Input
                           placeholder="Enter author name"
                           {...field}
-                          value={field.value || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -123,7 +144,6 @@ export function CreateBook() {
                         <Input
                           placeholder="Enter ISBN number"
                           {...field}
-                          value={field.value || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -135,14 +155,14 @@ export function CreateBook() {
                   name="copies"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Copies</FormLabel>
+                      <FormLabel>Copies *</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
-                          min="0"
+                          min="1"
                           placeholder="1"
                           {...field}
-                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -214,7 +234,6 @@ export function CreateBook() {
                         placeholder="Enter book description"
                         className="min-h-[100px]"
                         {...field}
-                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -226,7 +245,7 @@ export function CreateBook() {
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-1/2 bg-[#00b9be]"
+                  className="w-1/2 bg-[#00b9be] hover:bg-[#009da1]"
                 >
                   {isLoading ? "Creating..." : "Create Book"}
                 </Button>
