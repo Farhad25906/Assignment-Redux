@@ -28,9 +28,7 @@ import { useNavigate } from "react-router";
 const bookSchema = z.object({
   title: z.string().min(1, "Title is required").max(200, "Title is too long"),
   author: z.string().min(1, "Author is required").max(100, "Author name is too long"),
-  genre: z.enum(["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"], {
-    required_error: "Please select a genre",
-  }),
+  genre: z.enum(["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"]),
   isbn: z.string().min(10, "ISBN must be at least 10 characters").max(13, "ISBN must not exceed 13 characters"),
   copies: z.number().min(1, "At least 1 copy is required").int("Copies must be a whole number"),
   description: z.string().min(10, "Description must be at least 10 characters").max(1000, "Description is too long"),
